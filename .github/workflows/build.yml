@@ -67,9 +67,9 @@ jobs:
 
       - name: Push the file to the repository
         run: |
-          gh release create "$(date +"%Y%m%d_%H%M%S")" \
-          --title "Release: $(date +"%Y-%m-%d %H:%M")" \
-          --notes "Latest file"
+          TAG="$(date +"%Y%m%d_%H%M%S")"
+          gh release create "$TAG" --title "Release: $TAG" --notes "Latest file"
+          gh release upload "$TAG" "material_data.json" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
