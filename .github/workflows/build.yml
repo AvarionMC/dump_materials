@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+
+env:
+  MCVERSION: 1.20.4
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore .m2 repository packages from cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2
+          key: m2-cache-${{ github.run_id }}
+          restore-keys: m2-cache-
+
+      - name: Listing all jar files in maven repo (PRE)
+        run: |
+          jar_hash=$(find ~/.m2/repository -type f -name \*.jar | sort | md5sum)
+          echo "PRE_CACHE_HASH=$jar_hash" >> $GITHUB_ENV
+
+      - name: Restore pip package cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-cache-${{ github.run_id }}
+          restore-keys: pip-cache-
+
+      - name: Listing all jar files in pip cache (PRE)
+        run: |
+          pip_hash=$(find ~/.cache/pip -type f -name \*.whl | sort | md5sum)
+          echo "PRE_PIP_HASH=$pip_hash" >> $GITHUB_ENV
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install requests
+        run: pip install -r requirements.txt
+
+      - name: Build with Maven
+        run: mvn --batch-mode clean package
+
+      - name: Fetch latest minecraft paper server
+        run: python .github/scripts/fetch_latest_minecraft.py "$MCVERSION"
+
+      - name: Run the plugin
+        run: python .github/scripts/run_minecraft.py "$MCVERSION"
+
+      - name: Build project with Maven
+        run: mvn --batch-mode clean verify

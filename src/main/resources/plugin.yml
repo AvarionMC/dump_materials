@@ -1,0 +1,7 @@
+name: MaterialLogger
+description: "Log materials and quit"
+version: 1.0.0
+main: org.avarion.MaterialLogger
+api-version: 1.20
+author: svaningelgem
+load: POSTWORLD
