@@ -9,4 +9,4 @@ mkdir -p plugins
 cp ../../../target/MaterialLogger*.jar plugins
 echo "eula=true" >> "eula.txt"
 
-java -jar paper-*.jar nogui > output.txt 2>&1
+java -jar paper-*.jar nogui |& tee output.txt
