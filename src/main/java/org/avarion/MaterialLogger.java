@@ -18,13 +18,14 @@ public class MaterialLogger extends JavaPlugin {
             Arrays.sort(materials, Comparator.comparing(Enum::name));
 
             for (Material material : materials) {
+                getLogger().info("Material: " + material.getKey());
                 try {
                     BlockData data = material.createBlockData();
-                    if (data != null) {
-                        getLogger().info("false|" + data.getAsString(false));
-                        getLogger().info("true|" + data.getAsString(true));
-                    }
-                } catch (Exception ignored) {}
+                    getLogger().info("false|" + data.getAsString(false));
+                    getLogger().info("true|" + data.getAsString(true));
+                } catch (Exception ex) {
+                    getLogger().severe(" --> cannot create block data!");
+                }
             }
             getServer().shutdown();
         });
