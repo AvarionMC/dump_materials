@@ -65,6 +65,9 @@ jobs:
       - name: Run the plugin
         run: bash .github/scripts/run_minecraft.sh
 
+      - name: Converting the data to JSON
+        run: python .github/scripts/process_material_data.py
+
       - name: Push the file to the repository
         run: |
           TAG="$(date +"%Y%m%d_%H%M%S")"
